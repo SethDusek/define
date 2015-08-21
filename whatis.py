@@ -27,11 +27,12 @@ for i in range(1,len(rem)):
             filen = wget.download(url,"/tmp")
             print(url)
             system("play -t mp3 -q %s" % filen)
-            ask = raw_input("Would you like to hear it again? [Y/N] ")
-            if ask.lower().startswith("y"):
-                system("play -t mp3 -q %s" % filen)
-            else:
-                pass
+            while True:
+                ask = raw_input("Would you like to hear it again? [Y/N] ")
+                if ask.lower().startswith("y"):
+                    system("play -t mp3 -q %s" % filen)
+                else:
+                    break
         else:
             pass
 
