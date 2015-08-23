@@ -13,7 +13,7 @@ Example:
 #INSTALLATION
 Installing whatis is easy, rename it to whatis and move it to /usr/bin.
 
-You will need an api key from wordnik, get one from developer.wordnik.com and edit the "key" variable inside the script
+~~~You will need an api key from wordnik, get one from developer.wordnik.com and edit the "key" variable inside the script~~~
 
 #Using Audio
 
