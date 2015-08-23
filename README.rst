@@ -17,11 +17,9 @@ Example:
 INSTALLATION
 ============
 
-Installing define is easy, rename it to define and move it to /usr/bin.
+Installing define is easy, just clone it and run:
+    $ sudo python setup.py install
 
-Dependencies can be installed using this command:
-
-    $ sudo pip install wordnik wget
 
 On Arch you can do this to install all dependencies and the program:
 
