@@ -1,6 +1,6 @@
-#WhatIs
+#Define
 
-WhatIs is a terminal dictionary script that uses wordnik for definitions. Supports audio pronounciation
+Define is a terminal dictionary script that uses wordnik for definitions. Supports audio pronounciation
 
 Example:
 
@@ -35,7 +35,7 @@ Audio can be used in define with the -a or --audio flag.
 
 #FLAGS
 
-WhatIs has the following flags:
+Define has the following flags:
 
 *-a/--audio* - Audio pronounciation
 
