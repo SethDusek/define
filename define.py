@@ -1,4 +1,4 @@
-#! /usr/bin/env pypy
+#! /usr/bin/env python
 #import wordnik # this is one weird library, importing it using import wordnik doesnt work
 from wordnik import swagger,WordApi
 from sys import argv
