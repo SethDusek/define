@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 #import wordnik # this is one weird library, importing it using import wordnik doesnt work
-__version__ = '0.1'
 from wordnik import swagger,WordApi
 from sys import argv
 import optparse
