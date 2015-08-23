@@ -12,7 +12,7 @@ opts,rem = arg.parse_args(argv)
 audio = opts.audio
 #print(audio)
 #print(rem)
-key = "" 
+key = "1e940957819058fe3ec7c59d43c09504b400110db7faa0509" 
 client = swagger.ApiClient(key,"http://api.wordnik.com/v4")
 client = WordApi.WordApi(client)
 for i in range(1,len(rem)):
