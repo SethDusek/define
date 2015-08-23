@@ -20,6 +20,7 @@ Dependencies can be installed using this command:
 On Arch you can do this to install all dependencies and the program:
 
 >$ sudo yaourt -S define-git
+
 ~~You will need an api key from wordnik, get one from developer.wordnik.com and edit the "key" variable inside the script~~ *API key is now included in the script"
 
 #Using Audio
