@@ -8,7 +8,8 @@ setup(name='define',
       author_email='twodopeshaggy@gmail.com',
       url='https://github.com/SethDusek/define',
       data_files=[
-      ("share/man/man1", ["define.1"])
+      ("share/man/man1", ["define.1"]),
+      ("share/doc/define", ["LICENSE"])
       ],
       scripts=['define'],
       requires=['wordnik', 'requests'],
