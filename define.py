@@ -21,7 +21,11 @@ client = swagger.ApiClient(key,"http://api.wordnik.com/v4")
 client = WordApi.WordApi(client)
 for i in range(1,len(rem)):
     #wget.download(client.getAudio(rem[i])[0].fileUrl)
-    print(rem[i].upper() + ": \n" + client.getDefinitions(rem[i])[0].text)
+    try:  
+        print(rem[i].upper() + ": \n" + client.getDefinitions(rem[i])[0].text)
+    except TypeError:
+        print("Not found")
+        pass
     #"\nEXAMPLE: \n"+ client.getTopExample(rem[i]).text wordnik examples are horrendous so screw them
     if thesaurus:
         thes = requests.get("http://words.bighugelabs.com/api/2/%s/%s/json" % (tkey,rem[i])).json()
