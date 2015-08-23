@@ -39,7 +39,7 @@ for i in range(1,len(rem)):
             print(url)
             system("play -t mp3 -q %s" % filen)
             while True:
-                ask = raw_input("Would you like to hear it again? [Y/N] ")
+                ask = raw_input("\nWould you like to hear it again? [Y/N] ")
                 if ask.lower().startswith("y"):
                     system("play -t mp3 -q %s" % filen)
                 else:
