@@ -36,8 +36,11 @@ developer.wordnik.com and edit the "key" variable inside the script[STRIKEOUT]
 
 Notes for Ubuntu 15.04 (may apply to other versions):
     To enable pip you'll need to add universe to your sources.
+
     $ echo "deb http://archive.ubuntu.com/ubuntu/ vivid universe" | sudo tee -a "/etc/apt/sources.list"
+
     $ sudo apt-get update
+
     $ sudo apt-get install python-pip
 
     To make use of audio feature if you install with pip. You'll need to install the gstreamer pacakge.
