@@ -1,5 +1,6 @@
 *.py.swp
 *.pyc
+*.swp
 dist
 build
 define.egg-info
