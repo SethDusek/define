@@ -9,23 +9,33 @@ import requests
 arg = optparse.OptionParser()
 arg.add_option("-a","--audio",action="store_true",default=False)
 arg.add_option("-t","--thesaurus",action="store_true",default=False)
+arg.add_option("-u","--urban",action="store_true",default=False)
 opts,rem = arg.parse_args(argv)
 #print(opts)
 audio = opts.audio
 thesaurus = opts.thesaurus
+urban = opts.urban
 #print(audio)
 #print(rem)
 key = "1e940957819058fe3ec7c59d43c09504b400110db7faa0509"
 tkey = "e415520c671c26518df498d8f4736cac" #thesaurus key
+urbankey = "ub2JDDg9Iumsh1HfdO3a3HQbZi0up1qe8LkjsnWQvyVvQLFn1q"
 client = swagger.ApiClient(key,"http://api.wordnik.com/v4")
 client = WordApi.WordApi(client)
 for i in range(1,len(rem)):
     #wget.download(client.getAudio(rem[i])[0].fileUrl)
-    try:  
-        print(rem[i].upper() + ": \n" + client.getDefinitions(rem[i])[0].text)
-    except TypeError:
-        print("Not found")
-        pass
+    if urban==False:
+        try:  
+            print(rem[i].upper() + ": \n" + client.getDefinitions(rem[i])[0].text)
+        except TypeError:
+            print("Not Found")
+            pass
+    elif urban:
+        urb = requests.get("https://mashape-community-urban-dictionary.p.mashape.com/define?term=%s" % rem[i] ,headers={"X-Mashape-Key":urbankey}).json()
+        if len(urb["list"])>0:
+            print(rem[i].upper() + ": \n" + urb["list"][0]["definition"])
+        else:
+            print("Not Found")
     #"\nEXAMPLE: \n"+ client.getTopExample(rem[i]).text wordnik examples are horrendous so screw them
     if thesaurus:
         thes = requests.get("http://words.bighugelabs.com/api/2/%s/%s/json" % (tkey,rem[i])).json()
@@ -35,7 +45,6 @@ for i in range(1,len(rem)):
         if "verb" in thes:
             print("Verbs: %s" % " ".join(thes["verb"]["syn"]))
     if audio:
-        pass
         ask = raw_input("Would you like to hear audio pronounciation? [Y/N] ")
         if ask.lower().startswith("y"):
             url = client.getAudio(rem[i])[0].fileUrl
@@ -50,4 +59,3 @@ for i in range(1,len(rem)):
                     break
         else:
             pass
-

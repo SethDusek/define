@@ -52,3 +52,4 @@ Define has the following flags:
 *-a/--audio* - Audio pronounciation
 
 *-t/--thesaurus* - Thesaurus
+*-u/--urban* - Search Urban Dictionary instead of Wordnik
