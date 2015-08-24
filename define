@@ -7,55 +7,83 @@ from os import system,remove
 import wget
 import requests
 
-arg = optparse.OptionParser()
-arg.add_option("-a","--audio",action="store_true",default=False)
-arg.add_option("-t","--thesaurus",action="store_true",default=False)
-arg.add_option("-u","--urban",action="store_true",default=False)
-opts,rem = arg.parse_args(argv)
-if len(rem) == 1:
-    print "usage: define [options]\n-a, --audio Audio pronounciations\n-t, --thesaurus Thesaurus\n-u, --urban, Search Urban Dictionary instead of Wordnik"
-    sys.exit()
-    
-audio = opts.audio
-thesaurus = opts.thesaurus
-urban = opts.urban
 key = "1e940957819058fe3ec7c59d43c09504b400110db7faa0509"
 tkey = "e415520c671c26518df498d8f4736cac" #thesaurus key
 urbankey = "ub2JDDg9Iumsh1HfdO3a3HQbZi0up1qe8LkjsnWQvyVvQLFn1q"
-client = swagger.ApiClient(key,"http://api.wordnik.com/v4")
-client = WordApi.WordApi(client)
-for i in range(1,len(rem)):
-    if urban==False:
-        try:  
-            print(rem[i].upper() + ": \n" + client.getDefinitions(rem[i])[0].text)
-        except TypeError:
-            print("Not Found")
-            pass
-    elif urban:
-        urb = requests.get("https://mashape-community-urban-dictionary.p.mashape.com/define?term=%s" % rem[i] ,headers={"X-Mashape-Key":urbankey}).json()
-        if len(urb["list"])>0:
-            print(rem[i].upper() + ": \n" + urb["list"][0]["definition"])
+
+
+""" Returns the options that the user defined as well as the actual argument defined"""
+def get_args():
+    arg = optparse.OptionParser()
+    arg.add_option("-a","--audio",action="store_true",default=False)
+    arg.add_option("-t","--thesaurus",action="store_true",default=False)
+    arg.add_option("-u","--urban",action="store_true",default=False)
+    return arg.parse_args(argv)
+
+def check_args_valid(required_args):
+    if len(required_args) == 1:
+        print "usage: define [options]\n-a, --audio Audio pronounciations\n-t, --thesaurus Thesaurus\n-u, --urban, Search Urban Dictionary instead of Wordnik"
+        sys.exit()
+
+def get_wordapi_client():
+    client = swagger.ApiClient(key,"http://api.wordnik.com/v4")
+    return WordApi.WordApi(client)
+
+def play_definition(word, client):
+    ask = raw_input("Would you like to hear audio pronounciation? [Y/N] ")
+    if ask.lower().startswith("y"):
+        url = client.getAudio(word)[0].fileUrl
+        filen = wget.download(url,"/tmp")
+        system("play -t mp3 -q %s" % filen)
+        while True:
+            ask = raw_input("\nWould you like to hear it again? [Y/N] ")
+            if ask.lower().startswith("y"):
+                system("play -t mp3 -q %s" % filen)
+            else:
+                break
+
+def print_urban_dictionary_definition(word):
+    urb = requests.get("https://mashape-community-urban-dictionary.p.mashape.com/define?term=%s" % word ,headers={"X-Mashape-Key":urbankey}).json()
+    if len(urb["list"])>0:
+        print(word.upper() + ": \n" + urb["list"][0]["definition"])
+    else:
+        print("Not Found")
+    
+def print_wordnik_definition(word, client):
+    try:
+        print(word.upper() + ": \n" + client.getDefinitions(word)[0].text)
+    except TypeError:
+        print("Not Found")
+        sys.exit()
+def print_thesaurus_response(word):
+    response = requests.get("http://words.bighugelabs.com/api/2/%s/%s/json" % (tkey,word)).json()
+    print("SYNONYMS: ")
+    if "noun" in response:
+        print("\nNouns: %s" % " ".join(response["noun"]["syn"]))
+    if "verb" in response:
+        print("Verbs: %s" % " ".join(response["verb"]["syn"]))
+
+
+""" Given a list of words, this function will write their respective definitions on the terminal."""
+def print_each_definition(words, client, optional_args):
+    audio = optional_args.audio
+    thesaurus = optional_args.thesaurus
+    urban = optional_args.urban
+    for word in words[1:]:
+        if urban:
+            print_urban_dictionary_definition(word)
         else:
-            print("Not Found")
-    if thesaurus:
-        thes = requests.get("http://words.bighugelabs.com/api/2/%s/%s/json" % (tkey,rem[i])).json()
-        print("SYNONYMS: ")
-        if "noun" in thes:
-            print("\nNouns: %s" % " ".join(thes["noun"]["syn"]))
-        if "verb" in thes:
-            print("Verbs: %s" % " ".join(thes["verb"]["syn"]))
-    if audio:
-        ask = raw_input("Would you like to hear audio pronounciation? [Y/N] ")
-        if ask.lower().startswith("y"):
-            url = client.getAudio(rem[i])[0].fileUrl
-            filen = wget.download(url,"/tmp")
-            print(url)
-            system("play -t mp3 -q %s" % filen)
-            while True:
-                ask = raw_input("\nWould you like to hear it again? [Y/N] ")
-                if ask.lower().startswith("y"):
-                    system("play -t mp3 -q %s" % filen)
-                else:
-                    break
-        else:
-            pass
+            print_wordnik_definition(word, client)
+        if thesaurus:
+            print_thesaurus_response(word)
+        if audio:
+            play_definition(word, client)
+            
+if __name__ == "__main__":
+    (optional_args, required_args) = get_args()
+    check_args_valid(required_args)
+    client = get_wordapi_client()
+    print_each_definition(required_args, client, optional_args)
+
+    
+
