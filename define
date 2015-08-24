@@ -35,7 +35,7 @@ def play_definition(word, client):
         url = client.getAudio(word)[0].fileUrl
         filen = wget.download(url,"/tmp")
         print(filen)
-        system("gst-launch playbin uri=file://%s -q" % filen)
+        system("gst-launch-1.0 playbin uri=file://%s -q" % filen)
         while True:
             ask = raw_input("\nWould you like to hear it again? [Y/N] ")
             if ask.lower().startswith("y"):
