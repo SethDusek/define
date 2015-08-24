@@ -17,14 +17,19 @@ Example:
 INSTALLATION
 ============
 
-Installing define is easy, just clone it and run:
-    $ sudo python setup.py install
+Installing define is easy:
 
+Using pip:
 
-On Arch you can do this to install all dependencies and the program:
+>$ sudo pip install define
 
-    $ sudo yaourt -S define-git
+On Arch:
 
+>$ sudo yaourt -S define
+
+Manual Installation:
+
+>$ sudo python setup.py install
 [STRIKEOUT:You will need an api key from wordnik, get one from
 developer.wordnik.com and edit the "key" variable inside the script]
 \*API key is now included in the script"
