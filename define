@@ -22,7 +22,7 @@ def get_args():
 
 def check_args_valid(required_args):
     if len(required_args) == 1:
-        print "usage: define [options]\n-a, --audio Audio pronounciations\n-t, --thesaurus Thesaurus\n-u, --urban, Search Urban Dictionary instead of Wordnik"
+        print ("usage: define [options]\n-a, --audio Audio pronounciations\n-t, --thesaurus Thesaurus\n-u, --urban, Search Urban Dictionary instead of Wordnik")
         sys.exit()
 
 def get_wordapi_client():
