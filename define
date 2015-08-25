@@ -39,7 +39,7 @@ def play_definition(word, client):
         while True:
             ask = raw_input("\nWould you like to hear it again? [Y/N] ")
             if ask.lower().startswith("y"):
-                system("gst-launch -v -q playbin uri=file://%s" % filen)
+                system("gst-launch-1.0 -v -q playbin uri=file://%s" % filen)
             else:
                 break
 
