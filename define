@@ -22,7 +22,7 @@ def get_args():
 
 def check_args_valid(required_args):
     if len(required_args) == 1:
-        print "usage: define [options]\n-a, --audio Audio pronounciations\n-t, --thesaurus Thesaurus\n-u, --urban, Search Urban Dictionary instead of Wordnik"
+        print ("usage: define [options]\n-a, --audio Audio pronounciations\n-t, --thesaurus Thesaurus\n-u, --urban, Search Urban Dictionary instead of Wordnik")
         sys.exit()
 
 def get_wordapi_client():
@@ -39,7 +39,7 @@ def play_definition(word, client):
         while True:
             ask = raw_input("\nWould you like to hear it again? [Y/N] ")
             if ask.lower().startswith("y"):
-                system("gst-launch -v -q playbin uri=file://%s" % filen)
+                system("gst-launch-1.0 -v -q playbin uri=file://%s" % filen)
             else:
                 break
 
