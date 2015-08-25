@@ -45,7 +45,7 @@ Notes for Ubuntu 15.04 (may apply to other versions):
 
     To make use of audio feature if you install with pip. You'll need to install the gstreamer pacakge.
 
-    $ sudo apt-get install gstreamer-tools
+    $ sudo apt-get install gstreamer1.0-tools
 
 Using Audio
 ===========
