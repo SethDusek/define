@@ -1,10 +1,9 @@
-#! /usr/bin/env python2
+#!/usr/bin/pypy
 from wordnik import swagger,WordApi
 import sys
 from sys import argv
 import optparse
 from os import system,remove
-import wget
 import requests
 
 key = "1e940957819058fe3ec7c59d43c09504b400110db7faa0509"
@@ -33,12 +32,17 @@ def play_definition(word, client):
     ask = raw_input("Would you like to hear audio pronounciation? [y/N] ")
     if ask.lower().startswith("y"):
         url = client.getAudio(word)[0].fileUrl
-        filen = wget.download(url,"/tmp")
-        system("gst-launch-1.0 playbin uri=file://%s -q" % filen)
+        #filen = wget.download(url,"/tmp")
+        down = requests.get(url).content
+        filen = url.split("/")[5]
+        buff = open("/tmp/%s" % filen,"w")
+        buff.write(down)
+        buff.close()
+        system("gst-launch-1.0 playbin uri=file:///tmp/%s -q" % filen)
         while True:
             ask = raw_input("\nWould you like to hear it again? [y/N] ")
             if ask.lower().startswith("y"):
-                system("gst-launch-1.0 -q playbin uri=file://%s" % filen)
+                system("gst-launch-1.0 -q playbin uri=file:///tmp/%s" % filen)
             else:
                 break
 
@@ -51,7 +55,10 @@ def print_urban_dictionary_definition(word):
     
 def print_wordnik_definition(word, client):
     try:
-        print(word.upper() + ": \n" + client.getDefinitions(word)[0].text)
+        cons = []
+        for i in client.getHyphenation(word):
+            cons.append(i.text)
+        print(word.upper()  +  " " + "-".join(cons) + ": \n" + client.getDefinitions(word)[0].text)
     except TypeError:
         print("Not Found")
         sys.exit()
