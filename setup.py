@@ -15,7 +15,7 @@ setup(name='define',
       ("share/doc/define", ["LICENSE"])
       ],
       scripts=['define'],
-      install_requires=['wordnik', 'requests', ],
+      install_requires=['wordnik', 'requests'],
       classifiers=['Intended Audience :: End Users/Desktop',
                    'Programming Language :: Python :: 2',
                    'Programming Language :: Python :: 3'],

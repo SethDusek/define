@@ -4,4 +4,4 @@
 dist
 build
 define.egg-info
-
+*.swo
