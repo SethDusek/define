@@ -29,18 +29,25 @@ def get_wordapi_client():
     return WordApi.WordApi(client)
 
 def play_definition(word, client):
-    ask = raw_input("Would you like to hear audio pronounciation? [y/N] ")
+    if sys.version_info > (3,):
+        ask = input("Would you like to hear audio pronounciation? [y/N] ")
+    else:
+         ask = raw_input("Would you like to hear audio pronounciation? [y/N] ")
+
     if ask.lower().startswith("y"):
         url = client.getAudio(word)[0].fileUrl
         #filen = wget.download(url,"/tmp")
         down = requests.get(url).content
         filen = url.split("/")[5]
-        buff = open("/tmp/%s" % filen,"w")
+        buff = open("/tmp/%s" % filen,"wb")
         buff.write(down)
         buff.close()
         system("gst-launch-1.0 playbin uri=file:///tmp/%s -q" % filen)
         while True:
-            ask = raw_input("\nWould you like to hear it again? [y/N] ")
+            if sys.version_info > (3,):
+                ask = input("\nWould you like to hear it again? [y/N] ")
+            else:
+                ask = raw_input("\nWould you like to hear it again? [y/N] ")
             if ask.lower().startswith("y"):
                 system("gst-launch-1.0 -q playbin uri=file:///tmp/%s" % filen)
             else:
