@@ -25,7 +25,7 @@ Using pip:
 
 On Arch:
 
-    $ sudo yaourt -S define
+    $ yaourt -S define
 
 Manual Installation:
 
