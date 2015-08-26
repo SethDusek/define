@@ -1,4 +1,4 @@
-#!/usr/bin/pypy
+#!/usr/bin/python2
 from wordnik import swagger,WordApi
 import sys
 from sys import argv
