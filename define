@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python2
 from wordnik import swagger,WordApi
 import sys
 from sys import argv
@@ -51,7 +51,10 @@ def print_urban_dictionary_definition(word):
     
 def print_wordnik_definition(word, client):
     try:
-        print(word.upper() + ": \n" + client.getDefinitions(word)[0].text)
+        cons = []
+        for i in client.getHyphenation(word):
+            cons.append(i.text)
+        print(word.upper()  +  " " + "-".join(cons) + ": \n" + client.getDefinitions(word)[0].text)
     except TypeError:
         print("Not Found")
         sys.exit()
