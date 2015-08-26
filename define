@@ -4,7 +4,6 @@ import sys
 from sys import argv
 import optparse
 from os import system,remove
-import wget
 import requests
 
 key = "1e940957819058fe3ec7c59d43c09504b400110db7faa0509"
@@ -33,12 +32,12 @@ def play_definition(word, client):
     ask = raw_input("Would you like to hear audio pronounciation? [Y/N] ")
     if ask.lower().startswith("y"):
         url = client.getAudio(word)[0].fileUrl
-        filen = wget.download(url,"/tmp")
-        system("gst-launch-1.0 playbin uri=file://%s -q" % filen)
+        #filen = wget.download(url,"/tmp")
+        system("gst-launch-1.0 playbin uri=%s -q" % url)
         while True:
             ask = raw_input("\nWould you like to hear it again? [Y/N] ")
             if ask.lower().startswith("y"):
-                system("gst-launch-1.0 -v -q playbin uri=file://%s" % filen)
+                system("gst-launch-1.0 -q playbin uri=%s" % url)
             else:
                 break
 
