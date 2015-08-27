@@ -65,8 +65,8 @@ def play_definition(word, client):
 
 def print_urban_dictionary_definition(word):
     urb = requests.get(
-            "https://mashape-community-urban-dictionary.p.mashape.com/define?term=%s"
-            % word, headers={"X-Mashape-Key": urbankey}).json()
+        "https://mashape-community-urban-dictionary.p.mashape.com/define?term=%s"
+        % word, headers={"X-Mashape-Key": urbankey}).json()
     if len(urb["list"]) > 0:
         print(word.upper() + ": \n" + urb["list"][0]["definition"])
     else:
