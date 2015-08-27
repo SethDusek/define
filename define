@@ -11,8 +11,8 @@ tkey = "e415520c671c26518df498d8f4736cac"
 urbankey = "ub2JDDg9Iumsh1HfdO3a3HQbZi0up1qe8LkjsnWQvyVvQLFn1q"
 
 
-""" Returns the options that the user defined as well as the actual argument
-defined"""
+""" Returns the options that the user
+defined as well as the actual argument defined"""
 
 
 def get_args():
@@ -78,14 +78,16 @@ def print_wordnik_definition(word, client):
         cons = []
         for i in client.getHyphenation(word):
             cons.append(i.text)
-        print(word.upper() + " " + "-".join(cons) + ": \n" + client.getDefinitions(word)[0].text)
+        print(word.upper() + " " + "-".join(cons) + ": \n" +
+              client.getDefinitions(word)[0].text)
     except TypeError:
         print("Not Found")
         sys.exit()
 
 
 def print_thesaurus_response(word):
-    response = requests.get("http://words.bighugelabs.com/api/2/%s/%s/json" % (tkey, word)).json()
+    response = requests.get("http://words.bighugelabs.com/api/2/%s/%s/json"
+                            % (tkey, word)).json()
     print("SYNONYMS: ")
     if "noun" in response:
         print("\nNouns: %s" % " ".join(response["noun"]["syn"]))
@@ -93,7 +95,8 @@ def print_thesaurus_response(word):
         print("Verbs: %s" % " ".join(response["verb"]["syn"]))
 
 
-""" Given a list of words, this function will write their respective definitions on the terminal."""
+""" Given a list of words, this function will
+write their respective definitions on the terminal."""
 
 
 def print_each_definition(words, client, optional_args):
