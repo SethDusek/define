@@ -67,9 +67,9 @@ def get_wordapi_client():
 
 def play_definition(word, client):
     if sys.version_info > (3,):
-        ask = input("Would you like to hear audio pronounciation? [y/N] ")
+        ask = input("\nWould you like to hear audio pronounciation? [y/N] ")
     else:
-        ask = raw_input("Would you like to hear audio pronounciation? [y/N] ")
+        ask = raw_input("\nWould you like to hear audio pronounciation? [y/N] ")
 
     if ask.lower().startswith("y"):
         valid,url,obj = client.getAudio(word)
