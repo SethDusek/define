@@ -1,5 +1,4 @@
 #!/usr/bin/python
-from wordnik import swagger, WordApi
 import sys
 from sys import argv
 import optparse
@@ -9,6 +8,32 @@ import requests
 key = "1e940957819058fe3ec7c59d43c09504b400110db7faa0509"
 tkey = "e415520c671c26518df498d8f4736cac"
 urbankey = "ub2JDDg9Iumsh1HfdO3a3HQbZi0up1qe8LkjsnWQvyVvQLFn1q"
+class dict:
+    def __init__(self,key,urbankey,tkey):
+        self.key = key
+        self.urbankey = urbankey
+        self.tkey = tkey
+    def getDefinition(self,word):
+        definition = requests.get("http://api.wordnik.com/v4/word.json/%s/definitions?api_key=%s" % (word,self.key)).json()
+        if len(definition)>=1:
+            return definition[0]["text"]
+        return definition
+    def getHyphenation(self,word):
+        hyphenation = requests.get("http://api.wordnik.com/v4/word.json/%s/hyphenation?api_key=%s" % (word,self.key)).json()
+        return hyphenation
+    def getAudio(self,word):
+        url = requests.get("http://api.wordnik.com/v4/word.json/%s/audio?api_key=%s" % (word,self.key)).json()[0]["fileUrl"]
+        return url,requests.get(url)
+    def getUrban(self,word):
+        urb = requests.get("https://mashape-community-urban-dictionary.p.mashape.com/define?term=%s"
+        % word, headers={"X-Mashape-Key": self.urbankey}).json()
+        if len(urb["list"])>0:
+            return urb["list"][0]["definition"]
+    def getThesaurus(self,word):
+        response = requests.get("http://words.bighugelabs.com/api/2/%s/%s/json"
+                            % (self.tkey, word)).json()
+        return response
+
 
 
 """ Returns the options that the user
@@ -33,8 +58,7 @@ def check_args_valid(required_args):
 
 
 def get_wordapi_client():
-    client = swagger.ApiClient(key, "http://api.wordnik.com/v4")
-    return WordApi.WordApi(client)
+    return dict(key,urbankey,tkey)
 
 
 def play_definition(word, client):
@@ -44,9 +68,9 @@ def play_definition(word, client):
         ask = raw_input("Would you like to hear audio pronounciation? [y/N] ")
 
     if ask.lower().startswith("y"):
-        url = client.getAudio(word)[0].fileUrl
+        url,obj = client.getAudio(word)
         # filen = wget.download(url,"/tmp")
-        down = requests.get(url).content
+        down = obj.content
         filen = url.split("/")[5]
         buff = open("/tmp/%s" % filen, "wb")
         buff.write(down)
@@ -63,31 +87,24 @@ def play_definition(word, client):
                 break
 
 
-def print_urban_dictionary_definition(word):
-    urb = requests.get(
-        "https://mashape-community-urban-dictionary.p.mashape.com/define?term=%s"
-        % word, headers={"X-Mashape-Key": urbankey}).json()
-    if len(urb["list"]) > 0:
-        print(word.upper() + ": \n" + urb["list"][0]["definition"])
-    else:
-        print("Not Found")
+def print_urban_dictionary_definition(word,client):
+    print(word.upper() + ":\n" + client.getUrban(word))
 
 
 def print_wordnik_definition(word, client):
     try:
         cons = []
         for i in client.getHyphenation(word):
-            cons.append(i.text)
+            cons.append(i["text"])
         print(word.upper() + " " + "-".join(cons) + ": \n" +
-              client.getDefinitions(word)[0].text)
+              client.getDefinition(word))
     except TypeError:
         print("Not Found")
         sys.exit()
 
 
-def print_thesaurus_response(word):
-    response = requests.get("http://words.bighugelabs.com/api/2/%s/%s/json"
-                            % (tkey, word)).json()
+def print_thesaurus_response(word,client):
+    response = client.getThesaurus(word)
     print("SYNONYMS: ")
     if "noun" in response:
         print("\nNouns: %s" % " ".join(response["noun"]["syn"]))
@@ -105,11 +122,11 @@ def print_each_definition(words, client, optional_args):
     urban = optional_args.urban
     for word in words[1:]:
         if urban:
-            print_urban_dictionary_definition(word)
+            print_urban_dictionary_definition(word,client)
         else:
             print_wordnik_definition(word, client)
         if thesaurus:
-            print_thesaurus_response(word)
+            print_thesaurus_response(word,client)
         if audio:
             play_definition(word, client)
 
