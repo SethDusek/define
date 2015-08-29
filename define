@@ -25,7 +25,9 @@ class dict:
         url = requests.get("http://api.wordnik.com/v4/word.json/%s/audio?api_key=%s" % (word,self.key)).json()
         if len(url)>=1:
             url = url[0]["fileUrl"]
-        return url,requests.get(url)
+        else:
+            return False,"",""
+        return True,url,requests.get(url)
     def getUrban(self,word):
         urb = requests.get("https://mashape-community-urban-dictionary.p.mashape.com/define?term=%s"
         % word, headers={"X-Mashape-Key": self.urbankey}).json()
@@ -70,7 +72,10 @@ def play_definition(word, client):
         ask = raw_input("Would you like to hear audio pronounciation? [y/N] ")
 
     if ask.lower().startswith("y"):
-        url,obj = client.getAudio(word)
+        valid,url,obj = client.getAudio(word)
+        if valid==False:
+            print("Couldn't get Audio")
+            return
         # filen = wget.download(url,"/tmp")
         down = obj.content
         filen = url.split("/")[5]
@@ -90,8 +95,11 @@ def play_definition(word, client):
 
 
 def print_urban_dictionary_definition(word,client):
-    print(word.upper() + ":\n" + client.getUrban(word))
-
+    urb = client.getUrban(word)
+    if urb:
+        print(word.upper() + ":\n" + client.getUrban(word))
+    else:
+        print("Couldn't get definition from urbandictionary.com")
 
 def print_wordnik_definition(word, client):
     try:
