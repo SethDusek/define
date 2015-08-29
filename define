@@ -22,7 +22,9 @@ class dict:
         hyphenation = requests.get("http://api.wordnik.com/v4/word.json/%s/hyphenation?api_key=%s" % (word,self.key)).json()
         return hyphenation
     def getAudio(self,word):
-        url = requests.get("http://api.wordnik.com/v4/word.json/%s/audio?api_key=%s" % (word,self.key)).json()[0]["fileUrl"]
+        url = requests.get("http://api.wordnik.com/v4/word.json/%s/audio?api_key=%s" % (word,self.key)).json()
+        if len(url)>=1:
+            url = url[0]["fileUrl"]
         return url,requests.get(url)
     def getUrban(self,word):
         urb = requests.get("https://mashape-community-urban-dictionary.p.mashape.com/define?term=%s"

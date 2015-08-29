@@ -6,7 +6,7 @@ except ImportError:
 setup(name='define',
       description='Terminal Dictionary',
       long_description=open('README.rst').read(),
-      version='1.51',
+      version='1.52',
       author='SethDusek',
       author_email='shibe@openmailbox.org',
       url='https://github.com/SethDusek/define',
