@@ -62,11 +62,11 @@ defined as well as the actual argument defined"""
 
 def get_args():
     arg = optparse.OptionParser()
-    arg.add_option("-a", "--audio", action="store_true", default=False)
-    arg.add_option("-t", "--thesaurus", action="store_true", default=False)
-    arg.add_option("-u", "--urban", action="store_true", default=False)
+    arg.add_option("-a", "--audio", action="store_true", help='audio playback for the the search result', default=False)
+    arg.add_option("-t", "--thesaurus", action="store_true", help='show search results using thesaurus', default=False)
+    arg.add_option("-u", "--urban", action="store_true", help='show search results using urbandictionary.com', default=False)
     if which("dict") and which("dictd") is not None:
-        arg.add_option("-l", "--local", action="store_true",default=False)
+        arg.add_option("-l", "--local", action="store_true", help='show search results using local dict and dictd dictionary', default=False)
     return arg.parse_args(argv)
 
 
