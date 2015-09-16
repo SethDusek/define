@@ -140,7 +140,10 @@ def getLocalDefinition(word):
     definitions=[]
     output = subprocess.Popen(["dict",word],stdout=subprocess.PIPE)
     output = output.communicate()[0]
-    lines = output.split("\n")
+    try:
+        lines = str(output,encoding="utf-8").split("\n")
+    except TypeError: #screw you python3
+        lines = output.split("\n")
     for i,v in enumerate(lines):
         if v.startswith("     "):
             if v[5].isdigit():
