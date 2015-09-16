@@ -4,7 +4,7 @@ from sys import argv
 import optparse
 from os import system
 import requests
-
+import subprocess
 key = "1e940957819058fe3ec7c59d43c09504b400110db7faa0509"
 tkey = "e415520c671c26518df498d8f4736cac"
 urbankey = "ub2JDDg9Iumsh1HfdO3a3HQbZi0up1qe8LkjsnWQvyVvQLFn1q"
@@ -39,7 +39,23 @@ class dict:
         return response
 
 
+def which(program): #credit to http://stackoverflow.com/questions/377017/test-if-executable-exists-in-python
+    import os
+    def is_exe(fpath):
+        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
+    fpath, fname = os.path.split(program)
+    if fpath:
+        if is_exe(program):
+            return program
+    else:
+        for path in os.environ["PATH"].split(os.pathsep):
+            path = path.strip('"')
+            exe_file = os.path.join(path, program)
+            if is_exe(exe_file):
+                return exe_file
+
+    return None
 """ Returns the options that the user
 defined as well as the actual argument defined"""
 
@@ -49,6 +65,8 @@ def get_args():
     arg.add_option("-a", "--audio", action="store_true", default=False)
     arg.add_option("-t", "--thesaurus", action="store_true", default=False)
     arg.add_option("-u", "--urban", action="store_true", default=False)
+    if which("dict") and which("dictd") is not None:
+        arg.add_option("-l", "--local", action="store_true",default=False)
     return arg.parse_args(argv)
 
 
@@ -111,6 +129,29 @@ def print_wordnik_definition(word, client):
     except TypeError:
         print("Not Found")
         sys.exit()
+    except requests.exceptions.ConnectionError:
+        if which("dict")!=None:
+            fallback = raw_input("There was a connection error, but dict was detected. Would you like to use dict? [y/N] ")
+            if fallback.lower().startswith("y"):
+                print(getLocalDefinition(word)[0])
+            else:
+                pass
+def getLocalDefinition(word):
+    definitions=[]
+    output = subprocess.Popen(["dict",word],stdout=subprocess.PIPE)
+    output = output.communicate()[0]
+    lines = output.split("\n")
+    for i,v in enumerate(lines):
+        if v.startswith("     "):
+            if v[5].isdigit():
+                endline = None
+                for a,b in enumerate(lines[i:]):
+                    if b.startswith("        ["):
+                        endline = a+i
+                        definitions.append(" ".join(lines[i:endline]).replace("        ","")[8:])
+                        #print(lines[i:endline])
+                        break
+    return definitions
 
 
 def print_thesaurus_response(word,client):
@@ -130,9 +171,12 @@ def print_each_definition(words, client, optional_args):
     audio = optional_args.audio
     thesaurus = optional_args.thesaurus
     urban = optional_args.urban
+    local = optional_args.local
     for word in words[1:]:
         if urban:
             print_urban_dictionary_definition(word,client)
+        elif local:
+            print(getLocalDefinition(word)[0])
         else:
             print_wordnik_definition(word, client)
         if thesaurus:
