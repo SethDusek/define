@@ -67,7 +67,13 @@ FLAGS
 
 Define has the following flags:
 
-*-a/--audio* - Audio pronounciation
+*-h/--help* - Display help and exit.
 
-*-t/--thesaurus* - Thesaurus
-*-u/--urban* - Search Urban Dictionary instead of Wordnik
+*-a/--audio* - Audio pronounciation of keyword.
+
+*-t/--thesaurus* - Thesaurus results for keyword.
+
+*-u/--urban* - Search Urban Dictionary for results instead of Wordnik.
+
+*-l/--local* - Search keywords using local dict and dictd dictionary
+
