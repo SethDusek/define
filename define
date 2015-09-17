@@ -157,6 +157,8 @@ def getLocalDefinition(word):
     return definitions
 
 
+def getLocalAudio(word):
+    system("espeak %s" % word)
 def print_thesaurus_response(word,client):
     response = client.getThesaurus(word)
     print("SYNONYMS: ")
@@ -184,7 +186,9 @@ def print_each_definition(words, client, optional_args):
             print_wordnik_definition(word, client)
         if thesaurus:
             print_thesaurus_response(word,client)
-        if audio:
+        if audio and local and which("espeak"):
+            getLocalAudio(word)
+        elif audio:
             play_definition(word, client)
 
 if __name__ == "__main__":
