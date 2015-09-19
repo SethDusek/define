@@ -158,14 +158,31 @@ def getLocalDefinition(word):
 
 
 def getLocalAudio(word):
-    system("espeak %s" % word)
+    if sys.version_info > (3,):
+        ask = input("\nWould you like to hear audio pronounciation? [y/N] ")
+    else:
+        ask = raw_input("\nWould you like to hear audio pronounciation? [y/N] ")
+    if ask.lower().startswith("y"):
+        system("espeak %s" % word)
+    else:
+        pass
+    while True:
+        if sys.version_info > (3,):
+            ask = input("\nWould you like to hear it again? [y/N] ")
+        else:
+            ask = raw_input("\nWould you like to hear it again? [y/N] ")
+        if ask.lower().startswith("y"):
+            system("espeak %s" % word)
+        else:
+            break
+
 def print_thesaurus_response(word,client):
     response = client.getThesaurus(word)
     print("SYNONYMS: ")
     if "noun" in response:
-        print("\nNouns: %s" % " ".join(response["noun"]["syn"]))
+        print("\nNouns:\n%s" % " ".join(response["noun"]["syn"]))
     if "verb" in response:
-        print("Verbs: %s" % " ".join(response["verb"]["syn"]))
+        print("Verbs:\n%s" % " ".join(response["verb"]["syn"]))
 
 
 """ Given a list of words, this function will
@@ -181,7 +198,7 @@ def print_each_definition(words, client, optional_args):
         if urban:
             print_urban_dictionary_definition(word,client)
         elif local:
-            print(getLocalDefinition(word)[0])
+            print(word.upper()+":\n"+getLocalDefinition(word)[0])
         else:
             print_wordnik_definition(word, client)
         if thesaurus:
