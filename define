@@ -133,7 +133,9 @@ def print_wordnik_definition(word, client):
         if which("dict")!=None:
             fallback = raw_input("There was a connection error, but dict was detected. Would you like to use dict? [y/N] ")
             if fallback.lower().startswith("y"):
-                print(getLocalDefinition(word)[0])
+                definitions = getLocalDefinitions(word)
+                if len(definitions)>=1:
+                    print(definitions[0])
             else:
                 pass
 def getLocalDefinition(word):
