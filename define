@@ -122,8 +122,8 @@ def print_urban_dictionary_definition(word,client):
 
 def print_wordnik_definition(word, client):
     try:
+        cons = []
         if hyphenation:
-            cons = []
             for i in client.getHyphenation(word):
                 cons.append(i["text"])
         print(word.upper() + " " + "-".join(cons) + ": \n" +
