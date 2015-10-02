@@ -75,5 +75,5 @@ Define has the following flags:
 
 *-u/--urban* - Search Urban Dictionary for results instead of Wordnik.
 
-*-l/--local* - Search keywords using local dict and dictd dictionary
+*-l/--local* - Search keywords using local dict and dictd dictionary (NOTE: This currently only works with the gcide dictionary, no other dictionary will work at the moment)
 

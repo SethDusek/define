@@ -5,9 +5,17 @@ import optparse
 from os import system
 import requests
 import subprocess
+import re
+regex = re.compile("^\d\.")
 key = "1e940957819058fe3ec7c59d43c09504b400110db7faa0509"
 tkey = "e415520c671c26518df498d8f4736cac"
 urbankey = "ub2JDDg9Iumsh1HfdO3a3HQbZi0up1qe8LkjsnWQvyVvQLFn1q"
+hyphenation = False # Disable or Enable Hyphenation
+textBlob = True #check whether textblob module exists (needed for wordnet)
+try:
+    from textblob import Word
+except ImportError:
+    textBlob = False
 class dict:
     def __init__(self,key,urbankey,tkey):
         self.key = key
@@ -56,6 +64,17 @@ def which(program): #credit to http://stackoverflow.com/questions/377017/test-if
                 return exe_file
 
     return None
+def getLocalWordnet(word):
+    definitions = []    
+    output = subprocess.Popen(["wn",word,"-over"],stdout=subprocess.PIPE).communicate()[0]
+    for line in output.split("\n"):
+     reg = regex.search(line)
+     if reg:
+         definitions.append(line[reg.end():].split("--")[1][2:len(line.split("--")[1])-1].split(";")[0])
+    return definitions
+wn_exists=False
+if which("wn"):
+    wn_exists=True
 """ Returns the options that the user
 defined as well as the actual argument defined"""
 
@@ -65,6 +84,7 @@ def get_args():
     arg.add_option("-a", "--audio", action="store_true", help='audio playback for the the search result', default=False)
     arg.add_option("-t", "--thesaurus", action="store_true", help='show search results using thesaurus', default=False)
     arg.add_option("-u", "--urban", action="store_true", help='show search results using urbandictionary.com', default=False)
+    arg.add_option("-w","--wordnet", action="store_true", help='use wordnet instead of wordnik. Needs textblob module installed')
     if which("dict") and which("dictd") is not None:
         arg.add_option("-l", "--local", action="store_true", help='show search results using local dict and dictd dictionary', default=False)
     return arg.parse_args(argv)
@@ -115,17 +135,17 @@ def play_definition(word, client):
 def print_urban_dictionary_definition(word,client):
     urb = client.getUrban(word)
     if urb:
-        print(word.upper() + ":\n" + client.getUrban(word))
+        print(client.getUrban(word))
     else:
         print("Couldn't get definition from urbandictionary.com")
 
 def print_wordnik_definition(word, client):
     try:
         cons = []
-        for i in client.getHyphenation(word):
-            cons.append(i["text"])
-        print(word.upper() + " " + "-".join(cons) + ": \n" +
-              client.getDefinition(word))
+        if hyphenation:
+            for i in client.getHyphenation(word):
+                cons.append(i["text"])
+        print(client.getDefinition(word))
     except TypeError:
         print("Not Found")
         sys.exit()
@@ -133,7 +153,9 @@ def print_wordnik_definition(word, client):
         if which("dict") and which("dictd") is not None:
             fallback = raw_input("There was a connection error, but dict was detected. Would you like to use dict? [y/N] ")
             if fallback.lower().startswith("y"):
-                print(getLocalDefinition(word)[0])
+                definitions = getLocalDefinitions(word)
+                if len(definitions)>=1:
+                    print(definitions[0])
             else:
                 pass
 def getLocalDefinition(word):
@@ -156,14 +178,36 @@ def getLocalDefinition(word):
                         break
     return definitions
 
+def getWordnet(word):
+    definitions = Word(word).definitions
+    if len(definitions)>=1:
+        return definitions[0]
+def getLocalAudio(word):
+    if sys.version_info > (3,):
+        ask = input("\nWould you like to hear audio pronounciation? [y/N] ")
+    else:
+        ask = raw_input("\nWould you like to hear audio pronounciation? [y/N] ")
+    if ask.lower().startswith("y"):
+        system("espeak %s" % word)
+    else:
+        pass
+    while True:
+        if sys.version_info > (3,):
+            ask = input("\nWould you like to hear it again? [y/N] ")
+        else:
+            ask = raw_input("\nWould you like to hear it again? [y/N] ")
+        if ask.lower().startswith("y"):
+            system("espeak %s" % word)
+        else:
+            break
 
 def print_thesaurus_response(word,client):
     response = client.getThesaurus(word)
     print("SYNONYMS: ")
     if "noun" in response:
-        print("\nNouns: %s" % " ".join(response["noun"]["syn"]))
+        print("\nNouns:\n%s" % " ".join(response["noun"]["syn"]))
     if "verb" in response:
-        print("Verbs: %s" % " ".join(response["verb"]["syn"]))
+        print("Verbs:\n%s" % " ".join(response["verb"]["syn"]))
 
 
 """ Given a list of words, this function will
@@ -175,16 +219,25 @@ def print_each_definition(words, client, optional_args):
     thesaurus = optional_args.thesaurus
     urban = optional_args.urban
     local = optional_args.local
+    wordnet = optional_args.wordnet
     for word in words[1:]:
+        print(word.upper()+":")
         if urban:
             print_urban_dictionary_definition(word,client)
+        elif wordnet:
+            if wn_exists:
+                print(getLocalWordnet(word)[0])
+            elif textBlob:
+                print(getWordnet(word))
         elif local:
             print(getLocalDefinition(word)[0])
         else:
             print_wordnik_definition(word, client)
         if thesaurus:
             print_thesaurus_response(word,client)
-        if audio:
+        if audio and local and which("espeak"):
+            getLocalAudio(word)
+        elif audio:
             play_definition(word, client)
 
 if __name__ == "__main__":
