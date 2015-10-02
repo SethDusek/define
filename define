@@ -85,8 +85,7 @@ def get_args():
     arg.add_option("-t", "--thesaurus", action="store_true", help='show search results using thesaurus', default=False)
     arg.add_option("-u", "--urban", action="store_true", help='show search results using urbandictionary.com', default=False)
     arg.add_option("-w","--wordnet", action="store_true", help='use wordnet instead of wordnik. Needs textblob module installed')
-    if which("dict") and which("dictd") is not None:
-        arg.add_option("-l", "--local", action="store_true", help='show search results using local dict and dictd dictionary', default=False)
+    arg.add_option("-l", "--local", action="store_true", help='show search results using local dict and dictd dictionary', default=False)
     return arg.parse_args(argv)
 
 
