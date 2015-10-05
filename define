@@ -37,10 +37,11 @@ class dict:
         if len(urb["list"])>0:
             return urb["list"][0]["definition"]
     def getThesaurus(self,word):
-        response = requests.get("http://words.bighugelabs.com/api/2/%s/%s/json"
+        """response = requests.get("http://words.bighugelabs.com/api/2/%s/%s/json"
                             % (self.tkey, word)).json()
-        return response
-
+        return response"""
+        response = requests.get("http://api.wordnik.com:80/v4/word.json/%s/relatedWords?useCanonical=false&relationshipTypes=synonym&limitPerRelationshipType=15&api_key=%s" % (word,key)).json()
+        return response[0]
 
 def which(program): #credit to http://stackoverflow.com/questions/377017/test-if-executable-exists-in-python
     import os
@@ -198,10 +199,11 @@ def getLocalAudio(word):
 def print_thesaurus_response(word,client):
     response = client.getThesaurus(word)
     print("SYNONYMS: ")
-    if "noun" in response:
+    """if "noun" in response:
         print("\nNouns:\n%s" % " ".join(response["noun"]["syn"]))
     if "verb" in response:
-        print("Verbs:\n%s" % " ".join(response["verb"]["syn"]))
+        print("Verbs:\n%s" % " ".join(response["verb"]["syn"]))"""
+    print(",".join(response["words"]))
 
 
 """ Given a list of words, this function will
