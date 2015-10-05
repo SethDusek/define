@@ -11,11 +11,6 @@ key = "1e940957819058fe3ec7c59d43c09504b400110db7faa0509"
 tkey = "e415520c671c26518df498d8f4736cac"
 urbankey = "ub2JDDg9Iumsh1HfdO3a3HQbZi0up1qe8LkjsnWQvyVvQLFn1q"
 hyphenation = False # Disable or Enable Hyphenation
-textBlob = True #check whether textblob module exists (needed for wordnet)
-try:
-    from textblob import Word
-except ImportError:
-    textBlob = False
 class dict:
     def __init__(self,key,urbankey,tkey):
         self.key = key
@@ -224,6 +219,11 @@ def print_each_definition(words, client, optional_args):
         if urban:
             print_urban_dictionary_definition(word,client)
         elif wordnet:
+            textBlob = True #check whether textblob module exists (needed for wordnet)
+            try:
+                from textblob import Word
+            except ImportError:
+                textBlob = False
             if wn_exists:
                 print(getLocalWordnet(word)[0])
             elif textBlob:
