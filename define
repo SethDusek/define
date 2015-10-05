@@ -16,8 +16,8 @@ class dict:
         self.key = key
         self.urbankey = urbankey
         self.tkey = tkey
-    def getDefinition(self,word):
-        definition = requests.get("http://api.wordnik.com/v4/word.json/%s/definitions?api_key=%s" % (word,self.key)).json()
+    def getDefinition(self,word,source="all"):
+        definition = requests.get("http://api.wordnik.com/v4/word.json/%s/definitions?limit=1&api_key=%s&caseSensitive=false&useCanonical=true&sourceDictionaries=%s" % (word,self.key,source)).json()
         if len(definition)>=1:
             return definition[0]["text"]
         return definition
@@ -219,15 +219,10 @@ def print_each_definition(words, client, optional_args):
         if urban:
             print_urban_dictionary_definition(word,client)
         elif wordnet:
-            textBlob = True #check whether textblob module exists (needed for wordnet)
-            try:
-                from textblob import Word
-            except ImportError:
-                textBlob = False
             if wn_exists:
                 print(getLocalWordnet(word)[0])
-            elif textBlob:
-                print(getWordnet(word))
+            else:
+                print(client.getDefinition(word,"wordnet"))
         elif local:
             print(getLocalDefinition(word)[0])
         else:
