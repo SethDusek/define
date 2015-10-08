@@ -11,18 +11,13 @@ key = "1e940957819058fe3ec7c59d43c09504b400110db7faa0509"
 tkey = "e415520c671c26518df498d8f4736cac"
 urbankey = "ub2JDDg9Iumsh1HfdO3a3HQbZi0up1qe8LkjsnWQvyVvQLFn1q"
 hyphenation = False # Disable or Enable Hyphenation
-textBlob = True #check whether textblob module exists (needed for wordnet)
-try:
-    from textblob import Word
-except ImportError:
-    textBlob = False
 class dict:
     def __init__(self,key,urbankey,tkey):
         self.key = key
         self.urbankey = urbankey
         self.tkey = tkey
-    def getDefinition(self,word):
-        definition = requests.get("http://api.wordnik.com/v4/word.json/%s/definitions?api_key=%s" % (word,self.key)).json()
+    def getDefinition(self,word,source="all"):
+        definition = requests.get("http://api.wordnik.com/v4/word.json/%s/definitions?limit=1&api_key=%s&caseSensitive=false&useCanonical=true&sourceDictionaries=%s" % (word,self.key,source)).json()
         if len(definition)>=1:
             return definition[0]["text"]
         return definition
@@ -42,10 +37,11 @@ class dict:
         if len(urb["list"])>0:
             return urb["list"][0]["definition"]
     def getThesaurus(self,word):
-        response = requests.get("http://words.bighugelabs.com/api/2/%s/%s/json"
+        """response = requests.get("http://words.bighugelabs.com/api/2/%s/%s/json"
                             % (self.tkey, word)).json()
-        return response
-
+        return response"""
+        response = requests.get("http://api.wordnik.com:80/v4/word.json/%s/relatedWords?useCanonical=false&relationshipTypes=synonym&limitPerRelationshipType=15&api_key=%s" % (word,key)).json()
+        return response[0]
 
 def which(program): #credit to http://stackoverflow.com/questions/377017/test-if-executable-exists-in-python
     import os
@@ -84,8 +80,9 @@ def get_args():
     arg.add_option("-a", "--audio", action="store_true", help='audio playback for the the search result', default=False)
     arg.add_option("-t", "--thesaurus", action="store_true", help='show search results using thesaurus', default=False)
     arg.add_option("-u", "--urban", action="store_true", help='show search results using urbandictionary.com', default=False)
-    arg.add_option("-w","--wordnet", action="store_true", help='use wordnet instead of wordnik. Needs textblob module installed')
+    arg.add_option("-w","--wordnet", action="store_true", help='show search results using wordnet')
     arg.add_option("-l", "--local", action="store_true", help='show search results using local dict and dictd dictionary', default=False)
+    arg.add_option("-k", "--wiktionary", action="store_true", help='show search results using wiktionary')
     return arg.parse_args(argv)
 
 
@@ -203,10 +200,11 @@ def getLocalAudio(word):
 def print_thesaurus_response(word,client):
     response = client.getThesaurus(word)
     print("SYNONYMS: ")
-    if "noun" in response:
+    """if "noun" in response:
         print("\nNouns:\n%s" % " ".join(response["noun"]["syn"]))
     if "verb" in response:
-        print("Verbs:\n%s" % " ".join(response["verb"]["syn"]))
+        print("Verbs:\n%s" % " ".join(response["verb"]["syn"]))"""
+    print(",".join(response["words"]))
 
 
 """ Given a list of words, this function will
@@ -219,6 +217,7 @@ def print_each_definition(words, client, optional_args):
     urban = optional_args.urban
     local = optional_args.local
     wordnet = optional_args.wordnet
+    wiktionary = optional_args.wiktionary
     for word in words[1:]:
         print(word.upper()+":")
         if urban:
@@ -226,10 +225,12 @@ def print_each_definition(words, client, optional_args):
         elif wordnet:
             if wn_exists:
                 print(getLocalWordnet(word)[0])
-            elif textBlob:
-                print(getWordnet(word))
+            else:
+                print(client.getDefinition(word,"wordnet"))
         elif local:
             print(getLocalDefinition(word)[0])
+        elif wiktionary:
+            print(client.getDefinition(word,"wiktionary"))
         else:
             print_wordnik_definition(word, client)
         if thesaurus:
