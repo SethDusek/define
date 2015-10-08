@@ -5,3 +5,4 @@ dist
 build
 define.egg-info
 *.swo
+profile
