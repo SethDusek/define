@@ -2,7 +2,7 @@ Define
 ======
 
 Define is a terminal dictionary script that uses wordnik for
-definitions. Supports audio pronounciation
+definitions. Supports audio pronunciation
 
 Example:
 
@@ -60,7 +60,7 @@ Audio can be used in define with the -a or --audio flag.
     a person, such as that arising from kinship, recognition of
     attractive qualities, or a sense of underlying oneness.
 
-    Would you like to hear audio pronounciation? [Y/N] n
+    Would you like to hear audio pronunciation? [Y/N] n
 
 FLAGS
 =====
@@ -69,7 +69,7 @@ Define has the following flags:
 
 *-h/--help* - Display help and exit.
 
-*-a/--audio* - Audio pronounciation of keyword.
+*-a/--audio* - Audio pronunciation of keyword.
 
 *-t/--thesaurus* - Thesaurus results for keyword.
 
