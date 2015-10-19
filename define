@@ -14,23 +14,27 @@ hyphenation = False  # Disable or Enable Hyphenation
 
 
 class dict:
+
     def __init__(self, key, urbankey, tkey):
         self.key = key
         self.urbankey = urbankey
         self.tkey = tkey
 
     def getDefinition(self, word, source="all"):
-        definition = requests.get("http://api.wordnik.com/v4/word.json/%s/definitions?limit=1&api_key=%s&caseSensitive=false&useCanonical=true&sourceDictionaries=%s" % (word, self.key, source)).json()
+        definition = requests.get(
+            "http://api.wordnik.com/v4/word.json/%s/definitions?limit=1&api_key=%s&caseSensitive=false&useCanonical=true&sourceDictionaries=%s" % (word, self.key, source)).json()
         if len(definition) >= 1:
             return definition[0]["text"]
         return definition
 
     def getHyphenation(self, word):
-        hyphenation = requests.get("http://api.wordnik.com/v4/word.json/%s/hyphenation?api_key=%s" % (word, self.key)).json()
+        hyphenation = requests.get(
+            "http://api.wordnik.com/v4/word.json/%s/hyphenation?api_key=%s" % (word, self.key)).json()
         return hyphenation
 
     def getAudio(self, word):
-        url = requests.get("http://api.wordnik.com/v4/word.json/%s/audio?api_key=%s" % (word, self.key)).json()
+        url = requests.get("http://api.wordnik.com/v4/word.json/%s/audio?api_key=%s" %
+                           (word, self.key)).json()
         if len(url) >= 1:
             url = url[0]["fileUrl"]
         else:
@@ -39,14 +43,16 @@ class dict:
 
     def getUrban(self, word):
         urb = requests.get("https://mashape-community-urban-dictionary.p.mashape.com/define?term=%s"
-                % word, headers={"X-Mashape-Key": self.urbankey}).json()
+                           % word, headers={"X-Mashape-Key": self.urbankey}).json()
         if len(urb["list"]) > 0:
             return urb["list"][0]["definition"]
+
     def getThesaurus(self, word):
         """response = requests.get("http://words.bighugelabs.com/api/2/%s/%s/json"
                             % (self.tkey, word)).json()
         return response"""
-        response = requests.get("http://api.wordnik.com:80/v4/word.json/%s/relatedWords?useCanonical=false&relationshipTypes=synonym&limitPerRelationshipType=15&api_key=%s" % (word, key)).json()
+        response = requests.get(
+            "http://api.wordnik.com:80/v4/word.json/%s/relatedWords?useCanonical=false&relationshipTypes=synonym&limitPerRelationshipType=15&api_key=%s" % (word, key)).json()
         return response[0]
 
 
@@ -76,7 +82,8 @@ def getLocalWordnet(word):
     for line in output.split("\n"):
         reg = regex.search(line)
         if reg:
-            definitions.append(line[reg.end():].split("--")[1][2:len(line.split("--")[1])-1].split(";")[0])
+            definitions.append(line[reg.end():].split("--")[1]
+                               [2:len(line.split("--")[1]) - 1].split(";")[0])
     return definitions
 wn_exists = False
 if which("wn"):
@@ -87,12 +94,17 @@ defined as well as the actual argument defined"""
 
 def get_args():
     arg = optparse.OptionParser()
-    arg.add_option("-a", "--audio", action="store_true", help='audio playback for the the search result', default=False)
-    arg.add_option("-t", "--thesaurus", action="store_true", help='show search results using thesaurus', default=False)
-    arg.add_option("-u", "--urban", action="store_true", help='show search results using urbandictionary.com', default=False)
+    arg.add_option("-a", "--audio", action="store_true",
+                   help='audio playback for the the search result', default=False)
+    arg.add_option("-t", "--thesaurus", action="store_true",
+                   help='show search results using thesaurus', default=False)
+    arg.add_option("-u", "--urban", action="store_true",
+                   help='show search results using urbandictionary.com', default=False)
     arg.add_option("-w", "--wordnet", action="store_true", help='show search results using wordnet')
-    arg.add_option("-l", "--local", action="store_true", help='show search results using local dict and dictd dictionary', default=False)
-    arg.add_option("-k", "--wiktionary", action="store_true", help='show search results using wiktionary')
+    arg.add_option("-l", "--local", action="store_true",
+                   help='show search results using local dict and dictd dictionary', default=False)
+    arg.add_option("-k", "--wiktionary", action="store_true",
+                   help='show search results using wiktionary')
     return arg.parse_args(argv)
 
 
@@ -158,7 +170,8 @@ def print_wordnik_definition(word, client):
         sys.exit()
     except requests.exceptions.ConnectionError:
         if which("dict") != None:
-            fallback = raw_input("There was a connection error, but dict was detected. Would you like to use dict? [y/N] ")
+            fallback = raw_input(
+                "There was a connection error, but dict was detected. Would you like to use dict? [y/N] ")
             if fallback.lower().startswith("y"):
                 definitions = getLocalDefinitions(word)
                 if len(definitions) >= 1:
@@ -181,7 +194,7 @@ def getLocalDefinition(word):
                 endline = None
                 for a, b in enumerate(lines[i:]):
                     if b.startswith("        ["):
-                        endline = a+i
+                        endline = a + i
                         definitions.append(" ".join(lines[i:endline]).replace("        ", "")[8:])
                         # print(lines[i:endline])
                         break
@@ -236,7 +249,7 @@ def print_each_definition(words, client, optional_args):
     wordnet = optional_args.wordnet
     wiktionary = optional_args.wiktionary
     for word in words[1:]:
-        print(word.upper()+":")
+        print(word.upper() + ":")
         if urban:
             print_urban_dictionary_definition(word, client)
         elif wordnet:
