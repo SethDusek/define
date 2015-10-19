@@ -38,15 +38,9 @@ Manual Installation:
 ::
 
     $ sudo python setup.py install
-
-.. raw:: html
-
-   <s>
-You will need an api key from wordnik, get one from
-developer.wordnik.com and edit the “key” variable inside the script
-.. raw:: html
-
-   </s>
+.. class:: strike
+[STRIKEOUT:You will need an api key from wordnik, get one from
+developer.wordnik.com and edit the “key” variable inside the script]
 \*API key is now included in the script"
 
 Notes for Ubuntu 15.04 (may apply to other versions): To enable pip
