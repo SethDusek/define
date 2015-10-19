@@ -6,6 +6,8 @@ definitions. Supports audio pronunciation
 
 Example:
 
+::
+
     $define love
 
     LOVE:
@@ -21,21 +23,30 @@ Installing define is easy:
 
 Using pip:
 
+::
+
     $ sudo pip install define
 
 On Arch:
+
+::
 
     $ yaourt -S define
 
 Manual Installation:
 
+::
+
     $ sudo python setup.py install
-~~You will need an api key from wordnik, get one from
-developer.wordnik.com and edit the "key" variable inside the script~~
+
+[STRIKEOUT:You will need an api key from wordnik, get one from
+developer.wordnik.com and edit the “key” variable inside the script]
 \*API key is now included in the script"
 
-Notes for Ubuntu 15.04 (may apply to other versions):
-    To enable pip you'll need to add universe to your sources.
+Notes for Ubuntu 15.04 (may apply to other versions): To enable pip
+you’ll need to add universe to your sources.
+
+::
 
     $ echo "deb http://archive.ubuntu.com/ubuntu/ vivid universe" | sudo tee -a "/etc/apt/sources.list"
 
@@ -50,7 +61,9 @@ Notes for Ubuntu 15.04 (may apply to other versions):
 Using Audio
 ===========
 
-Audio can be used in define with the -a or --audio flag.
+Audio can be used in define with the -a or –audio flag.
+
+::
 
     $ define --audio love
 
@@ -67,13 +80,14 @@ FLAGS
 
 Define has the following flags:
 
-*-h/--help* - Display help and exit.
+*-h/–help* - Display help and exit.
 
-*-a/--audio* - Audio pronunciation of keyword.
+*-a/–audio* - Audio pronunciation of keyword.
 
-*-t/--thesaurus* - Thesaurus results for keyword.
+*-t/–thesaurus* - Thesaurus results for keyword.
 
-*-u/--urban* - Search Urban Dictionary for results instead of Wordnik.
+*-u/–urban* - Search Urban Dictionary for results instead of Wordnik.
 
-*-l/--local* - Search keywords using local dict and dictd dictionary (NOTE: This currently only works with the gcide dictionary, no other dictionary will work at the moment)
-
+*-l/–local* - Search keywords using local dict and dictd dictionary
+(NOTE: This currently only works with the gcide dictionary, no other
+dictionary will work at the moment)
