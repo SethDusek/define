@@ -11,6 +11,10 @@ key = "1e940957819058fe3ec7c59d43c09504b400110db7faa0509"
 tkey = "e415520c671c26518df498d8f4736cac"
 urbankey = "ub2JDDg9Iumsh1HfdO3a3HQbZi0up1qe8LkjsnWQvyVvQLFn1q"
 hyphenation = False  # Disable or Enable Hyphenation
+try:
+        raw_input_ = raw_input
+except NameError:
+        raw_input_ = input
 
 
 class dict:
@@ -122,10 +126,7 @@ def get_wordapi_client():
 
 
 def play_definition(word, client):
-    if sys.version_info > (3,):
-        ask = input("\nWould you like to hear audio pronunciation? [y/N] ")
-    else:
-        ask = raw_input("\nWould you like to hear audio pronunciation? [y/N] ")
+    ask = raw_input_("\nWould you like to hear audio pronunciation? [y/N] ")
 
     if ask.lower().startswith("y"):
         valid, url, obj = client.getAudio(word)
@@ -140,10 +141,7 @@ def play_definition(word, client):
         buff.close()
         system("gst-launch-1.0 playbin uri=file:///tmp/%s -q" % filen)
         while True:
-            if sys.version_info > (3,):
-                ask = input("\nWould you like to hear it again? [y/N] ")
-            else:
-                ask = raw_input("\nWould you like to hear it again? [y/N] ")
+            ask = raw_input_("\nWould you like to hear it again? [y/N] ")
             if ask.lower().startswith("y"):
                 system("gst-launch-1.0 -q playbin uri=file:///tmp/%s" % filen)
             else:
@@ -170,7 +168,7 @@ def print_wordnik_definition(word, client):
         sys.exit()
     except requests.exceptions.ConnectionError:
         if which("dict") != None:
-            fallback = raw_input(
+            fallback = raw_input_(
                 "There was a connection error, but dict was detected. Would you like to use dict? [y/N] ")
             if fallback.lower().startswith("y"):
                 definitions = getLocalDefinitions(word)
@@ -208,19 +206,13 @@ def getWordnet(word):
 
 
 def getLocalAudio(word):
-    if sys.version_info > (3,):
-        ask = input("\nWould you like to hear audio pronunciation? [y/N] ")
-    else:
-        ask = raw_input("\nWould you like to hear audio pronunciation? [y/N] ")
+    ask = raw_input_("\nWould you like to hear audio pronunciation? [y/N] ")
     if ask.lower().startswith("y"):
         system("espeak %s" % word)
     else:
         pass
     while True:
-        if sys.version_info > (3,):
-            ask = input("\nWould you like to hear it again? [y/N] ")
-        else:
-            ask = raw_input("\nWould you like to hear it again? [y/N] ")
+        ask = raw_input_("\nWould you like to hear it again? [y/N] ")
         if ask.lower().startswith("y"):
             system("espeak %s" % word)
         else:
