@@ -12,9 +12,9 @@ tkey = "e415520c671c26518df498d8f4736cac"
 urbankey = "ub2JDDg9Iumsh1HfdO3a3HQbZi0up1qe8LkjsnWQvyVvQLFn1q"
 hyphenation = False  # Disable or Enable Hyphenation
 try:
-        raw_input_ = raw_input
+    raw_input_ = raw_input
 except NameError:
-        raw_input_ = input
+    raw_input_ = input
 
 
 class dict:
@@ -82,7 +82,8 @@ def which(program):  # credit to http://stackoverflow.com/questions/377017/test-
 
 def getLocalWordnet(word):
     definitions = []
-    output = subprocess.Popen(["wn", word, "-over"], stdout=subprocess.PIPE).communicate()[0]
+    output = subprocess.Popen(["wn", word, "-over"],
+                              stdout=subprocess.PIPE).communicate()[0]
     for line in output.split("\n"):
         reg = regex.search(line)
         if reg:
@@ -99,14 +100,18 @@ defined as well as the actual argument defined"""
 def get_args():
     arg = optparse.OptionParser()
     arg.add_option("-a", "--audio", action="store_true",
-                   help='audio playback for the the search result', default=False)
+                   help='audio playback for the the search result',
+                   default=False)
     arg.add_option("-t", "--thesaurus", action="store_true",
                    help='show search results using thesaurus', default=False)
     arg.add_option("-u", "--urban", action="store_true",
-                   help='show search results using urbandictionary.com', default=False)
-    arg.add_option("-w", "--wordnet", action="store_true", help='show search results using wordnet')
+                   help='show search results using urbandictionary.com',
+                   default=False)
+    arg.add_option("-w", "--wordnet", action="store_true",
+                   help='show search results using wordnet')
     arg.add_option("-l", "--local", action="store_true",
-                   help='show search results using local dict and dictd dictionary', default=False)
+                   help='show search results using local dict and dictd',
+                   default=False)
     arg.add_option("-k", "--wiktionary", action="store_true",
                    help='show search results using wiktionary')
     return arg.parse_args(argv)
@@ -169,7 +174,8 @@ def print_wordnik_definition(word, client):
     except requests.exceptions.ConnectionError:
         if which("dict") != None:
             fallback = raw_input_(
-                "There was a connection error, but dict was detected. Would you like to use dict? [y/N] ")
+                "There was a connection error, but dict was detected. \
+                        Would you like to use dict? [y/N] ")
             if fallback.lower().startswith("y"):
                 definitions = getLocalDefinition(word)
                 if len(definitions) >= 1:
@@ -200,7 +206,7 @@ def getLocalDefinition(word):
 
 
 def getWordnet(word):
-    definitions = Word(word).definitions
+    definitions = word(word).definitions
     if len(definitions) >= 1:
         return definitions[0]
 
