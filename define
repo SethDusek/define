@@ -250,7 +250,10 @@ def print_each_definition(words, client, optional_args):
             else:
                 print(client.getDefinition(word, "wordnet"))
         elif local:
-            print(getLocalDefinition(word)[0])
+            try:
+                print(getLocalDefinition(word)[0])
+            except IndexError:
+                print("Definition Not Found")
         elif wiktionary:
             print(client.getDefinition(word, "wiktionary"))
         else:
