@@ -26,19 +26,22 @@ class dict:
 
     def getDefinition(self, word, source="all"):
         definition = requests.get(
-            "http://api.wordnik.com/v4/word.json/%s/definitions?limit=1&api_key=%s&caseSensitive=false&useCanonical=true&sourceDictionaries=%s" % (word, self.key, source)).json()
+            "http://api.wordnik.com/v4/word.json/%s/definitions?limit=1"
+            "&api_key=%s&caseSensitive=false&useCanonical=true&"
+            "sourceDictionaries=%s" % (word, self.key, source)).json()
         if len(definition) >= 1:
             return definition[0]["text"]
         return definition
 
     def getHyphenation(self, word):
         hyphenation = requests.get(
-            "http://api.wordnik.com/v4/word.json/%s/hyphenation?api_key=%s" % (word, self.key)).json()
+            "http://api.wordnik.com/v4/word.json/%s/hyphenation?api_key=%s"
+            % (word, self.key)).json()
         return hyphenation
 
     def getAudio(self, word):
-        url = requests.get("http://api.wordnik.com/v4/word.json/%s/audio?api_key=%s" %
-                           (word, self.key)).json()
+        url = requests.get("http://api.wordnik.com/v4/word.json/%s/audio?"
+                           "api_key=%s" % (word, self.key)).json()
         if len(url) >= 1:
             url = url[0]["fileUrl"]
         else:
@@ -46,8 +49,10 @@ class dict:
         return True, url, requests.get(url)
 
     def getUrban(self, word):
-        urb = requests.get("https://mashape-community-urban-dictionary.p.mashape.com/define?term=%s"
-                           % word, headers={"X-Mashape-Key": self.urbankey}).json()
+        urb = requests.get("https://mashape-community-urban-dictionary.p."
+                           "mashape.com/define?term=%s"
+                           % word, headers={"X-Mashape-Key":
+                                            self.urbankey}).json()
         if len(urb["list"]) > 0:
             return urb["list"][0]["definition"]
 
@@ -56,11 +61,15 @@ class dict:
                             % (self.tkey, word)).json()
         return response"""
         response = requests.get(
-            "http://api.wordnik.com:80/v4/word.json/%s/relatedWords?useCanonical=false&relationshipTypes=synonym&limitPerRelationshipType=15&api_key=%s" % (word, key)).json()
+            "http://api.wordnik.com:80/v4/word.json/%s/relatedWords?"
+            "useCanonical=false&relationshipTypes=synonym&limitPer"
+            "RelationshipType=15&api_key=%s" % (word, key)).json()
         return response[0]
 
 
-def which(program):  # credit to http://stackoverflow.com/questions/377017/test-if-executable-exists-in-python
+# credit to
+# http://stackoverflow.com/questions/377017/test-if-executable-exists-in-python
+def which(program):
     import os
 
     def is_exe(fpath):
@@ -199,7 +208,8 @@ def getLocalDefinition(word):
                 for a, b in enumerate(lines[i:]):
                     if b.startswith("        ["):
                         endline = a + i
-                        definitions.append(" ".join(lines[i:endline]).replace("        ", "")[8:])
+                        definitions.append(" ".join(lines[i:endline])
+                                           .replace("        ", "")[8:])
                         # print(lines[i:endline])
                         break
     return definitions
