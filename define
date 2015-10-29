@@ -90,11 +90,14 @@ def which(program):
     return None
 
 def parse_hunspell(word):
-    hunspell = subprocess.Popen("hunspell",stdout=subprocess.PIPE,stdin=subprocess.PIPE)
-    output = hunspell.communicate(input=word)[0]
-    words = output.split(": ")[1].split(", ")
-    words = [v.rstrip() for v in words]
-    return {"word":word,"suggestions":words}
+    if which("hunspell"):
+        hunspell = subprocess.Popen("hunspell",stdout=subprocess.PIPE,stdin=subprocess.PIPE)
+        output = hunspell.communicate(input=word)[0]
+        words = output.split(": ")[1].split(", ")
+        words = [v.rstrip() for v in words]
+        return {"word":word,"suggestions":words}
+    else:
+        return requests.get("http://i.shibe.ml:8080?word=%s" % word).json()[0]
 
 def getLocalWordnet(word):
     definitions = []
@@ -197,7 +200,7 @@ def print_wordnik_definition(word, client,source="all"):
                 pass
     except:
         print("Not found")
-        
+        print("Did you mean: " + ",".join(parse_hunspell(word)["suggestions"]))
 
 def getLocalDefinition(word):
     definitions = []
