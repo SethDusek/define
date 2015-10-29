@@ -5,15 +5,15 @@ except ImportError:
 
 setup(name='define',
       description='Terminal Dictionary',
-      long_description=open('README.rst').read(),
+      long_description=open('README.md').read(),
       version='1.70',
       author='SethDusek',
       author_email='shibe@openmailbox.org',
       url='https://github.com/SethDusek/define',
       data_files=[
-      ("share/man/man1", ["define.1"]),
-      ("share/doc/define", ["LICENSE"])
-      ],
+          ("share/man/man1", ["define.1"]),
+          ("share/doc/define", ["LICENSE"])
+          ],
       scripts=['define'],
       install_requires=['requests'],
       classifiers=['Intended Audience :: End Users/Desktop',
