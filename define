@@ -30,9 +30,12 @@ class dict:
             "&api_key=%s&caseSensitive=false&useCanonical=true&"
             "sourceDictionaries=%s" % (word, self.key, source)).json()
         if len(definition) >= 1:
-            return definition[0]["text"]
-        else:
-            raise
+            try:
+                return definition[0]["text"]
+            except TypeError:
+                raise
+            else:
+                raise
 
     def getHyphenation(self, word):
         hyphenation = requests.get(
@@ -65,7 +68,10 @@ class dict:
             "http://api.wordnik.com:80/v4/word.json/%s/relatedWords?"
             "useCanonical=false&relationshipTypes=synonym&limitPer"
             "RelationshipType=15&api_key=%s" % (word, key)).json()
-        return response[0]
+        try:
+            return response[0]
+        except IndexError:
+            pass
 
 
 # credit to
@@ -89,15 +95,18 @@ def which(program):
 
     return None
 
+
 def parse_hunspell(word):
     if which("hunspell"):
-        hunspell = subprocess.Popen("hunspell",stdout=subprocess.PIPE,stdin=subprocess.PIPE)
+        hunspell = subprocess.Popen("hunspell", stdout=subprocess.PIPE,
+                                    stdin=subprocess.PIPE)
         output = hunspell.communicate(input=word)[0]
         words = output.split(": ")[1].split(", ")
         words = [v.rstrip() for v in words]
-        return {"word":word,"suggestions":words}
+        return {"word": word, "suggestions": words}
     else:
         return requests.get("http://i.shibe.ml:8080?word=%s" % word).json()[0]
+
 
 def getLocalWordnet(word):
     definitions = []
@@ -180,13 +189,13 @@ def print_urban_dictionary_definition(word, client):
         print("Couldn't get definition from urbandictionary.com")
 
 
-def print_wordnik_definition(word, client,source="all"):
+def print_wordnik_definition(word, client, source="all"):
     try:
         cons = []
         if hyphenation:
             for i in client.getHyphenation(word):
                 cons.append(i["text"])
-        print(client.getDefinition(word,source))
+        print(client.getDefinition(word, source))
     except requests.exceptions.ConnectionError:
         if which("dict") != None:
             fallback = raw_input_(
@@ -201,6 +210,7 @@ def print_wordnik_definition(word, client,source="all"):
     except:
         print("Not found")
         print("Did you mean: " + ",".join(parse_hunspell(word)["suggestions"]))
+
 
 def getLocalDefinition(word):
     definitions = []
@@ -251,7 +261,10 @@ def print_thesaurus_response(word, client):
         print("\nNouns:\n%s" % " ".join(response["noun"]["syn"]))
     if "verb" in response:
         print("Verbs:\n%s" % " ".join(response["verb"]["syn"]))"""
-    print(",".join(response["words"]))
+    try:
+        print(",".join(response["words"]))
+    except TypeError:
+        pass
 
 
 """ Given a list of words, this function will
