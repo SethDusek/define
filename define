@@ -31,7 +31,8 @@ class dict:
             "sourceDictionaries=%s" % (word, self.key, source)).json()
         if len(definition) >= 1:
             return definition[0]["text"]
-        return definition
+        else:
+            raise
 
     def getHyphenation(self, word):
         hyphenation = requests.get(
@@ -88,6 +89,15 @@ def which(program):
 
     return None
 
+def parse_hunspell(word):
+    if which("hunspell"):
+        hunspell = subprocess.Popen("hunspell",stdout=subprocess.PIPE,stdin=subprocess.PIPE)
+        output = hunspell.communicate(input=word)[0]
+        words = output.split(": ")[1].split(", ")
+        words = [v.rstrip() for v in words]
+        return {"word":word,"suggestions":words}
+    else:
+        return requests.get("http://i.shibe.ml:8080?word=%s" % word).json()[0]
 
 def getLocalWordnet(word):
     definitions = []
@@ -170,16 +180,13 @@ def print_urban_dictionary_definition(word, client):
         print("Couldn't get definition from urbandictionary.com")
 
 
-def print_wordnik_definition(word, client):
+def print_wordnik_definition(word, client,source="all"):
     try:
         cons = []
         if hyphenation:
             for i in client.getHyphenation(word):
                 cons.append(i["text"])
-        print(client.getDefinition(word))
-    except TypeError:
-        print("Not Found")
-        sys.exit()
+        print(client.getDefinition(word,source))
     except requests.exceptions.ConnectionError:
         if which("dict") != None:
             fallback = raw_input_(
@@ -191,7 +198,9 @@ def print_wordnik_definition(word, client):
                     print(definitions[0])
             else:
                 pass
-
+    except:
+        print("Not found")
+        print("Did you mean: " + ",".join(parse_hunspell(word)["suggestions"]))
 
 def getLocalDefinition(word):
     definitions = []
@@ -264,14 +273,14 @@ def print_each_definition(words, client, optional_args):
             if wn_exists:
                 print(getLocalWordnet(word)[0])
             else:
-                print(client.getDefinition(word, "wordnet"))
+                print_wordnik_definition(word, client, "wordnet")
         elif local:
             try:
                 print(getLocalDefinition(word)[0])
             except IndexError:
                 print("Definition Not Found")
         elif wiktionary:
-            print(client.getDefinition(word, "wiktionary"))
+            print_wordnik_definition(word, client, "wiktionary")
         else:
             print_wordnik_definition(word, client)
         if thesaurus:
