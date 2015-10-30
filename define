@@ -195,7 +195,10 @@ def print_wordnik_definition(word, client, source="all"):
         if hyphenation:
             for i in client.getHyphenation(word):
                 cons.append(i["text"])
-        print(client.getDefinition(word, source))
+        definition = client.getDefinition(word,source)
+        if definition is None:
+            raise
+        print(definition)
     except requests.exceptions.ConnectionError:
         if which("dict") != None:
             fallback = raw_input_(
