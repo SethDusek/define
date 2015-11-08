@@ -100,8 +100,11 @@ def parse_hunspell(word):
     if which("hunspell"):
         hunspell = subprocess.Popen("hunspell", stdout=subprocess.PIPE,
                                     stdin=subprocess.PIPE)
-        output = hunspell.communicate(input=word)[0]
-        words = output.split(": ")[1].split(", ")
+        try:
+            output = hunspell.communicate(input=bytes(word, "utf-8"))[0]
+        except TypeError:
+            output = hunspell.communicate(input=word)[0]
+        words = output.decode().split(": ")[1].split(", ")
         words = [v.rstrip() for v in words]
         return {"word": word, "suggestions": words}
     else:
@@ -197,7 +200,7 @@ def print_wordnik_definition(word, client, source="all"):
                 cons.append(i["text"])
         definition = client.getDefinition(word, source)
         if definition is None:
-            print("Definition Not Found")
+            print("Did you mean: " + ",".join(parse_hunspell(word)["suggestions"]))
         else:
             print(definition)
     except requests.exceptions.ConnectionError:
