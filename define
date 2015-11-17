@@ -104,7 +104,10 @@ def parse_hunspell(word):
             output = hunspell.communicate(input=bytes(word, "utf-8"))[0]
         except TypeError:
             output = hunspell.communicate(input=word)[0]
-        words = output.decode().split(": ")[1].split(", ")
+        try:
+            words = output.decode().split(": ")[1].split(", ")
+        except IndexError:
+            words = output.decode().split(": ")[0].split(", ")
         words = [v.rstrip() for v in words]
         return {"word": word, "suggestions": words}
     else:
