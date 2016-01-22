@@ -16,7 +16,7 @@ try:
 except NameError:
     raw_input_ = input
 
-
+max_definitions = 3
 class dict:
 
     def __init__(self, key, urbankey, tkey):
@@ -26,12 +26,12 @@ class dict:
 
     def getDefinition(self, word, source="all"):
         definition = requests.get(
-            "http://api.wordnik.com/v4/word.json/%s/definitions?limit=1"
+            "http://api.wordnik.com/v4/word.json/%s/definitions?limit=%s"
             "&api_key=%s&caseSensitive=false&useCanonical=true&"
-            "sourceDictionaries=%s" % (word, self.key, source)).json()
+            "sourceDictionaries=%s" % (word, max_definitions, self.key, source)).json()
         if len(definition) >= 1:
             try:
-                return definition[0]["text"]
+                return definition
             except TypeError:
                 raise
             else:
@@ -205,7 +205,11 @@ def print_wordnik_definition(word, client, source="all"):
         if definition is None:
             print("Did you mean: " + ",".join(parse_hunspell(word)["suggestions"]))
         else:
-            print(definition)
+            if len(definition)==1:
+                print(definition[0]["text"])
+            elif len(definition)>1:
+                for i,v in enumerate(definition):
+                    print("%s. %s" % (i+1,v["text"]))
     except requests.exceptions.ConnectionError:
         if which("dict") != None:
             fallback = raw_input_(
@@ -217,7 +221,7 @@ def print_wordnik_definition(word, client, source="all"):
                     print(definitions[0])
             else:
                 pass
-    except:
+    except Exception,e:
         print("Not found")
         print("Did you mean: " + ",".join(parse_hunspell(word)["suggestions"]))
 
