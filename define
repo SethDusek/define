@@ -221,7 +221,7 @@ def print_wordnik_definition(word, client, source="all"):
                     print(definitions[0])
             else:
                 pass
-    except Exception,e:
+    except Exception as e:
         print("Not found")
         print("Did you mean: " + ",".join(parse_hunspell(word)["suggestions"]))
 
