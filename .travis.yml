@@ -3,3 +3,5 @@ php:
     - 2.7
     - 3.4
 script: ./define test
+sudo: required
+
