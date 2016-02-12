@@ -17,6 +17,8 @@ except NameError:
     raw_input_ = input
 
 max_definitions = 3
+
+
 class dict:
 
     def __init__(self, key, urbankey, tkey):
@@ -28,7 +30,8 @@ class dict:
         definition = requests.get(
             "http://api.wordnik.com/v4/word.json/%s/definitions?limit=%s"
             "&api_key=%s&caseSensitive=false&useCanonical=true&"
-            "sourceDictionaries=%s" % (word, max_definitions, self.key, source)).json()
+            "sourceDictionaries=%s" % (word, max_definitions, self.key,
+                                       source)).json()
         if len(definition) >= 1:
             try:
                 return definition
@@ -203,15 +206,16 @@ def print_wordnik_definition(word, client, source="all"):
                 cons.append(i["text"])
         definition = client.getDefinition(word, source)
         if definition is None:
-            print("Did you mean: " + ",".join(parse_hunspell(word)["suggestions"]))
+            print("Did you mean: " +
+                  ",".join(parse_hunspell(word)["suggestions"]))
         else:
-            if len(definition)==1:
+            if len(definition) == 1:
                 print(definition[0]["text"])
-            elif len(definition)>1:
-                for i,v in enumerate(definition):
-                    print("%s. %s" % (i+1,v["text"]))
+            elif len(definition) > 1:
+                for i, v in enumerate(definition):
+                    print("%s. %s" % (i + 1, v["text"]))
     except requests.exceptions.ConnectionError:
-        if which("dict") != None:
+        if which("dict") is not None:
             fallback = raw_input_(
                 "There was a connection error, but dict was detected. \
                         Would you like to use dict? [y/N] ")
