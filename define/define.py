@@ -129,7 +129,11 @@ def parse_hunspell(word):
         words = [v.rstrip() for v in words]
         return {"word": word, "suggestions": words}
     else:
-        return requests.get("http://i.shibe.ml:8080?word=%s" % word).json()[0]
+        try:
+            shibe = requests.get("http://i.shibe.ml:8080?word=%s" % word).json()[0]
+            return shibe
+        except ValueError:
+            pass
 
 
 def getLocalWordnet(word):
