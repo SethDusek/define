@@ -6,6 +6,7 @@ from os import system
 import requests
 import subprocess
 import re
+
 regex = re.compile("^\d\.")
 key = "1e940957819058fe3ec7c59d43c09504b400110db7faa0509"
 tkey = "e415520c671c26518df498d8f4736cac"
@@ -142,7 +143,7 @@ defined as well as the actual argument defined"""
 
 
 def get_args():
-    arg = optparse.OptionParser()
+    arg = optparse.OptionParser(version='%prog ' + __version__)
     arg.add_option("-a", "--audio", action="store_true",
                    help='audio playback for the the search result',
                    default=False)
@@ -329,6 +330,14 @@ def print_each_definition(words, client, optional_args):
             play_definition(word, client)
 
 if __name__ == "__main__":
+    if __package__ is None:
+        from os import path
+        sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+        from __version__ import __version__
+
+    else:
+        from .__version__ import __version__
+
     (optional_args, required_args) = get_args()
     check_args_valid(required_args)
     client = get_wordapi_client()

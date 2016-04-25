@@ -1,3 +1,4 @@
+from version import __version__ as version
 try:
             from setuptools import setup
 except ImportError:
@@ -6,7 +7,7 @@ except ImportError:
 setup(name='define',
       description='Terminal Dictionary',
       long_description=open('README.md').read(),
-      version='1.71',
+      version=version,
       author='SethDusek',
       author_email='shibe@openmailbox.org',
       url='https://github.com/SethDusek/define',
@@ -14,7 +15,8 @@ setup(name='define',
           ("share/man/man1", ["define.1"]),
           ("share/doc/define", ["LICENSE"])
           ],
-      scripts=['define'],
+      packages=['define'],
+      entry_points={'console_scripts': ['define=define.define:main']},
       install_requires=['requests'],
       classifiers=['Intended Audience :: End Users/Desktop',
                    'Programming Language :: Python :: 2',
