@@ -56,10 +56,17 @@ class dict:
         return True, url, requests.get(url)
 
     def getUrban(self, word):
-        urb = requests.get("https://mashape-community-urban-dictionary.p."
-                           "mashape.com/define?term=%s"
-                           % word, headers={"X-Mashape-Key":
-                                            self.urbankey}).json()
+        try:
+            urb = requests.get("https://mashape-community-urban-dictionary.p."
+                               "mashape.com/define?term=%s"
+                               % word, headers={"X-Mashape-Key":
+                                                self.urbankey}).json()
+        except requests.exceptions.SSLError:
+            urb = requests.get("https://mashape-community-urban-dictionary.p."
+                               "mashape.com/define?term={0}",
+                               verify="/etc/ssl/certs/ca-certificates.crt",
+                               headers={"X-Mashape-Key":
+                                        self.urbankey}).json()
         if len(urb["list"]) > 0:
             return urb["list"][0]["definition"]
 
