@@ -3,9 +3,17 @@ import sys
 from sys import argv
 import optparse
 from os import system
+from os import path
 import requests
 import subprocess
 import re
+try:
+    from .__version__ import __version__
+except ValueError:
+    from __version__ import __version__
+except SystemError:
+    from __version__ import __version__
+
 regex = re.compile("^\d\.")
 key = "1e940957819058fe3ec7c59d43c09504b400110db7faa0509"
 tkey = "e415520c671c26518df498d8f4736cac"
@@ -56,10 +64,17 @@ class dict:
         return True, url, requests.get(url)
 
     def getUrban(self, word):
-        urb = requests.get("https://mashape-community-urban-dictionary.p."
-                           "mashape.com/define?term=%s"
-                           % word, headers={"X-Mashape-Key":
-                                            self.urbankey}).json()
+        try:
+            urb = requests.get("https://mashape-community-urban-dictionary.p."
+                               "mashape.com/define?term=%s"
+                               % word, headers={"X-Mashape-Key":
+                                                self.urbankey}).json()
+        except requests.exceptions.SSLError:
+            urb = requests.get("https://mashape-community-urban-dictionary.p."
+                               "mashape.com/define?term={0}",
+                               verify="/etc/ssl/certs/ca-certificates.crt",
+                               headers={"X-Mashape-Key":
+                                        self.urbankey}).json()
         if len(urb["list"]) > 0:
             return urb["list"][0]["definition"]
 
@@ -90,9 +105,9 @@ def which(program):
         if is_exe(program):
             return program
     else:
-        for path in os.environ["PATH"].split(os.pathsep):
-            path = path.strip('"')
-            exe_file = os.path.join(path, program)
+        for pathh in os.environ["PATH"].split(os.pathsep):
+            pathh = pathh.strip('"')
+            exe_file = os.path.join(pathh, program)
             if is_exe(exe_file):
                 return exe_file
 
@@ -135,7 +150,7 @@ defined as well as the actual argument defined"""
 
 
 def get_args():
-    arg = optparse.OptionParser()
+    arg = optparse.OptionParser(version='%prog ' + __version__)
     arg.add_option("-a", "--audio", action="store_true",
                    help='audio playback for the the search result',
                    default=False)
@@ -159,7 +174,8 @@ def check_args_valid(required_args):
         print("usage: define [options]\
         \n-a, --audio Audio pronunciations\
         \n-t, --thesaurus Thesaurus\
-        \n-u, --urban, Search Urban Dictionary instead of Wordnik")
+        \n-u, --urban, Search Urban Dictionary instead of Wordnik\
+        \n-h, --help, Display help and exit")
         sys.exit()
 
 
@@ -310,6 +326,8 @@ def print_each_definition(words, client, optional_args):
                 print(getLocalDefinition(word)[0])
             except IndexError:
                 print("Definition Not Found")
+            except OSError:
+                print("The program dict could not be found.")
         elif wiktionary:
             print_wordnik_definition(word, client, "wiktionary")
         else:
@@ -321,8 +339,16 @@ def print_each_definition(words, client, optional_args):
         elif audio:
             play_definition(word, client)
 
-if __name__ == "__main__":
+
+def main():
     (optional_args, required_args) = get_args()
     check_args_valid(required_args)
     client = get_wordapi_client()
     print_each_definition(required_args, client, optional_args)
+
+if __name__ == "__main__":
+    if __package__ is None:
+        sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+    else:
+        pass
+    main()
