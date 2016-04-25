@@ -3,8 +3,9 @@ python:
     - "2.7"
     - "3.4"
     - "3.5"
+sudo: required
 before_install:
-    - apt-get install -qq python-requests
+    - sudo apt-get install -qq python-requests
 install:
     - pip install -r requirements.txt
     - pip install pytest
