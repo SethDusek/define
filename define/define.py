@@ -3,9 +3,16 @@ import sys
 from sys import argv
 import optparse
 from os import system
+from os import path
 import requests
 import subprocess
 import re
+try:
+    from .__version__ import __version__
+except ValueError:
+    from __version__ import __version__
+except SystemError:
+    from __version__ import __version__
 
 regex = re.compile("^\d\.")
 key = "1e940957819058fe3ec7c59d43c09504b400110db7faa0509"
@@ -98,9 +105,9 @@ def which(program):
         if is_exe(program):
             return program
     else:
-        for path in os.environ["PATH"].split(os.pathsep):
-            path = path.strip('"')
-            exe_file = os.path.join(path, program)
+        for pathh in os.environ["PATH"].split(os.pathsep):
+            pathh = pathh.strip('"')
+            exe_file = os.path.join(pathh, program)
             if is_exe(exe_file):
                 return exe_file
 
@@ -319,6 +326,8 @@ def print_each_definition(words, client, optional_args):
                 print(getLocalDefinition(word)[0])
             except IndexError:
                 print("Definition Not Found")
+            except OSError:
+                print("The program dict could not be found.")
         elif wiktionary:
             print_wordnik_definition(word, client, "wiktionary")
         else:
@@ -330,16 +339,16 @@ def print_each_definition(words, client, optional_args):
         elif audio:
             play_definition(word, client)
 
-if __name__ == "__main__":
-    if __package__ is None:
-        from os import path
-        sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-        from __version__ import __version__
 
-    else:
-        from .__version__ import __version__
-
+def main():
     (optional_args, required_args) = get_args()
     check_args_valid(required_args)
     client = get_wordapi_client()
     print_each_definition(required_args, client, optional_args)
+
+if __name__ == "__main__":
+    if __package__ is None:
+        sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+    else:
+        pass
+    main()
