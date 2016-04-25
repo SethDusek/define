@@ -1,4 +1,8 @@
-#Define
+Define [![Build Status][BS img]][Build Status]
+=================
+
+[Build Status]: https://travis-ci.org/shaggytwodope/define
+[BS img]: https://api.travis-ci.org/shaggytwodope/define.png
 
 Define is a terminal dictionary script that uses wordnik for
 definitions. Supports audio pronunciation
@@ -13,7 +17,7 @@ Example:
 >a person, such as that arising from kinship, recognition of
 >attractive qualities, or a sense of underlying oneness.
 
-#INSTALLATION
+## INSTALLATION
 
 Installing define is easy:
 
@@ -45,8 +49,7 @@ To make use of audio feature if you install with pip. You'll need to install the
 
     $ sudo apt-get install gstreamer1.0-tools
 
-Using Audio
-===========
+## Using Audio
 
 Audio can be used in define with the -a or --audio flag.
 
@@ -60,8 +63,7 @@ Audio can be used in define with the -a or --audio flag.
 
     Would you like to hear audio pronunciation? [Y/N] n
 
-FLAGS
-=====
+## FLAGS
 
 Define has the following flags:
 
