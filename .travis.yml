@@ -4,7 +4,8 @@ python:
     - "3.4"
     - "3.5"
 install:
-    - pip install -r requirements.txt
+    - pip install . -UI
+    - pip install -r requirements.txt -UI
     - pip install pytest
     - pip install pytest-pep8
 script: 
