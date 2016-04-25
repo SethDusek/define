@@ -167,7 +167,8 @@ def check_args_valid(required_args):
         print("usage: define [options]\
         \n-a, --audio Audio pronunciations\
         \n-t, --thesaurus Thesaurus\
-        \n-u, --urban, Search Urban Dictionary instead of Wordnik")
+        \n-u, --urban, Search Urban Dictionary instead of Wordnik\
+        \n-h, --help, Display help and exit")
         sys.exit()
 
 
