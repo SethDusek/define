@@ -1,3 +1,4 @@
 include *.md
 include define.1
 include LICENSE
+include version.py
