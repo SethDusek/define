@@ -27,6 +27,10 @@ except NameError:
 max_definitions = 3
 
 
+class MissingBinaryException(Exception):
+    pass
+
+
 class dict:
 
     def __init__(self, key, urbankey, tkey):
@@ -115,21 +119,20 @@ def which(program):
 
 
 def parse_hunspell(word):
-    if which("hunspell"):
-        hunspell = subprocess.Popen("hunspell", stdout=subprocess.PIPE,
-                                    stdin=subprocess.PIPE)
-        try:
-            output = hunspell.communicate(input=bytes(word, "utf-8"))[0]
-        except TypeError:
-            output = hunspell.communicate(input=word)[0]
-        try:
-            words = output.decode().split(": ")[1].split(", ")
-        except IndexError:
-            words = output.decode().split(": ")[0].split(", ")
-        words = [v.rstrip() for v in words]
-        return {"word": word, "suggestions": words}
-    else:
-        return requests.get("http://i.shibe.ml:8080?word=%s" % word).json()[0]
+    if not which("hunspell"):
+        raise MissingBinaryException("Hunspell is missing. Please install it to get spelling corrections.")
+    hunspell = subprocess.Popen("hunskell", stdout=subprocess.PIPE,
+                                stdin=subprocess.PIPE)
+    try:
+        output = hunspell.communicate(input=bytes(word, "utf-8"))[0]
+    except TypeError:
+        output = hunspell.communicate(input=word)[0]
+    try:
+        words = output.decode().split(": ")[1].split(", ")
+    except IndexError:
+        words = output.decode().split(": ")[0].split(", ")
+    words = [v.rstrip() for v in words]
+    return {"word": word, "suggestions": words}
 
 
 def getLocalWordnet(word):
@@ -222,8 +225,12 @@ def print_wordnik_definition(word, client, source="all"):
                 cons.append(i["text"])
         definition = client.getDefinition(word, source)
         if definition is None:
-            print("Did you mean: " +
-                  ",".join(parse_hunspell(word)["suggestions"]))
+            print("Could not find a definition")
+            try:
+                print("Did you mean: " +
+                      ",".join(parse_hunspell(word)["suggestions"]))
+            except MissingBinaryException as e:
+                print(e)
         else:
             if len(definition) == 1:
                 print(definition[0]["text"])
@@ -243,7 +250,10 @@ def print_wordnik_definition(word, client, source="all"):
                 pass
     except:
         print("Not found")
-        print("Did you mean: " + ",".join(parse_hunspell(word)["suggestions"]))
+        try:
+            print("Did you mean: " + ",".join(parse_hunspell(word)["suggestions"]))
+        except MissingBinaryException as e:
+            print(e)
 
 
 def getLocalDefinition(word):
