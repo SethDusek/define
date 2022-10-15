@@ -233,10 +233,10 @@ def print_wordnik_definition(word, client, source="all"):
                 print(e)
         else:
             if len(definition) == 1:
-                print(definition[0]["text"])
+                print(sanitize_output(definition[0]["text"]))
             elif len(definition) > 1:
                 for i, v in enumerate(definition):
-                    print("%s. %s" % (i + 1, v["text"]))
+                    print("%s. %s" % (i + 1, sanitize_output(v["text"])))
     except requests.exceptions.ConnectionError:
         if which("dict") is not None:
             fallback = raw_input_(
@@ -254,6 +254,11 @@ def print_wordnik_definition(word, client, source="all"):
             print("Did you mean: " + ",".join(parse_hunspell(word)["suggestions"]))
         except MissingBinaryException as e:
             print(e)
+
+
+def sanitize_output(word):
+    sanitized = re.sub('</?xref>', '', word)
+    return sanitized
 
 
 def getLocalDefinition(word):
